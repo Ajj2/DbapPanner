@@ -14,20 +14,25 @@
               companyName="Ajj">
   <MAINGROUP id="Jm79lo" name="DbapPanner">
     <GROUP id="{C172DB11-9680-D8EA-3F45-4B71D17B0059}" name="Source">
-      <FILE id="YdRRpo" name="PluginProcessor.cpp" compile="1" resource="0"
-            file="Source/PluginProcessor.cpp"/>
-      <FILE id="AZW1Ss" name="PluginProcessor.h" compile="0" resource="0"
-            file="Source/PluginProcessor.h"/>
-      <FILE id="iohyCi" name="PluginEditor.cpp" compile="1" resource="0"
-            file="Source/PluginEditor.cpp"/>
-      <FILE id="FgKhy7" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
+      <GROUP id="{B791FB82-9FDA-4B25-C051-FD1714ECA643}" name="Main">
+        <FILE id="bH4F1x" name="PluginEditor.cpp" compile="1" resource="0"
+              file="Source/Main/PluginEditor.cpp"/>
+        <FILE id="HC31xP" name="PluginEditor.h" compile="0" resource="0" file="Source/Main/PluginEditor.h"/>
+        <FILE id="b9HMVL" name="PluginProcessor.cpp" compile="1" resource="0"
+              file="Source/Main/PluginProcessor.cpp"/>
+        <FILE id="dOKRxj" name="PluginProcessor.h" compile="0" resource="0"
+              file="Source/Main/PluginProcessor.h"/>
+      </GROUP>
+      <FILE id="fxtrfB" name="Identifiers.h" compile="0" resource="0" file="Source/Identifiers.h"/>
     </GROUP>
   </MAINGROUP>
   <EXPORTFORMATS>
-    <XCODE_MAC targetFolder="Builds/MacOSX">
+    <XCODE_MAC targetFolder="Builds/MacOSX" externalLibraries="armadillo">
       <CONFIGURATIONS>
-        <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="DbapPanner"/>
-        <CONFIGURATION name="Release" isDebug="0" optimisation="3" targetName="DbapPanner"/>
+        <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="DbapPanner"
+                       libraryPath="/usr/local/Cellar/armadillo/7.960.1/lib" headerPath="/usr/local/Cellar/armadillo/7.960.1/include"/>
+        <CONFIGURATION name="Release" isDebug="0" optimisation="3" targetName="DbapPanner"
+                       libraryPath="/usr/local/Cellar/armadillo/7.960.1/lib" headerPath="/usr/local/Cellar/armadillo/7.960.1/include"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_core" path="../../../../JUCE_5/modules"/>
