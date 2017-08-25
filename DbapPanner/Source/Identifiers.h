@@ -14,7 +14,13 @@
 
 const Identifier IDparameterState = "parameterState";
 
-const Identifier IDgain = "Gain";
 const Identifier IDchannelGain = "channelGain";
-const Identifier IDchannelIndex = "channelIndex";
 
+const Identifier IDSpeakerPositions = "SpeakerPositions";
+const Identifier IDSpeakerPosition = "SpeakerPos";
+const Identifier IDSourcePosition = "SourcePosition";
+
+const Identifier IDIndex = "Index";
+const Identifier IDX = "X";
+const Identifier IDY = "Y";
+const Identifier IDZ = "Z";

@@ -31,10 +31,32 @@ DbapPannerAudioProcessor::DbapPannerAudioProcessor()
     for (int ch = 0; ch < numChannels; ch++)
     {
         String i = (String)ch;
-        parameters.createAndAddParameter(IDgain.toString()+i, IDgain.toString()+(String)i,String(), NormalisableRange<float> (0.0f, 1.0f), 0.5f, nullptr, nullptr);
+        parameters.createAndAddParameter(IDchannelGain.toString()+i, IDchannelGain.toString()+(String)i,String(), NormalisableRange<float> (0.0f, 1.0f), 0.5f, nullptr, nullptr);
     }
     
     parameters.state = ValueTree (IDparameterState);
+    
+    ValueTree SpeakerPositions = ValueTree (IDSpeakerPositions);
+    for (int ch = 0; ch < numChannels; ch++)
+    {
+        ValueTree SpeakerPosition = ValueTree (IDSpeakerPosition);
+        SpeakerPosition.setProperty(IDIndex, ch, nullptr);
+        SpeakerPosition.setProperty(IDX, 1+ch, nullptr);
+        SpeakerPosition.setProperty(IDY, 2+ch, nullptr);
+        SpeakerPosition.setProperty(IDZ, 3+ch, nullptr);
+        
+        SpeakerPositions.addChild(SpeakerPosition, -1, &undoManager);
+    }
+    parameters.state.addChild(SpeakerPositions, -1, &undoManager);
+    
+    ValueTree SourcePosition = ValueTree(IDSourcePosition);
+    SourcePosition.setProperty(IDX, 1.5, nullptr);
+    SourcePosition.setProperty(IDY, 2.5, nullptr);
+    SourcePosition.setProperty(IDZ, 3.5, nullptr);
+    
+    parameters.state.addChild(SourcePosition, -1, &undoManager);
+    
+    dbap = new Dbap();
 }
 
 DbapPannerAudioProcessor::~DbapPannerAudioProcessor()
@@ -99,7 +121,7 @@ void DbapPannerAudioProcessor::prepareToPlay (double sampleRate, int samplesPerB
 {
     for (int ch = 0 ; ch < numChannels; ch++)
     {
-        prevGain[ch] = *parameters.getRawParameterValue(IDgain+(String)ch);
+        prevGain[ch] = *parameters.getRawParameterValue(IDchannelGain+(String)ch);
     }
 }
 
@@ -122,7 +144,7 @@ bool DbapPannerAudioProcessor::isBusesLayoutSupported (const BusesLayout& layout
         {
             if (!layouts.getMainOutputChannelSet().isDisabled())
             {
-                if (layouts.getMainOutputChannelSet()==AudioChannelSet::discreteChannels(16))
+                if (layouts.getMainOutputChannelSet()==AudioChannelSet::discreteChannels(numChannels))
                     return true;
                 else
                     return false;
@@ -139,7 +161,7 @@ bool DbapPannerAudioProcessor::isBusesLayoutSupported (const BusesLayout& layout
         {
             if (!layouts.getMainOutputChannelSet().isDisabled())
             {
-                if (layouts.getMainOutputChannelSet()==AudioChannelSet::discreteChannels(16))
+                if (layouts.getMainOutputChannelSet()==AudioChannelSet::discreteChannels(numChannels))
                     return true;
                 else
                     return false;
@@ -156,7 +178,7 @@ bool DbapPannerAudioProcessor::isBusesLayoutSupported (const BusesLayout& layout
         {
             if (!layouts.getMainOutputChannelSet().isDisabled())
             {
-                if (layouts.getMainOutputChannelSet()==AudioChannelSet::discreteChannels(16))
+                if (layouts.getMainOutputChannelSet()==AudioChannelSet::discreteChannels(numChannels))
                     return true;
                 else
                     return false;
@@ -178,20 +200,30 @@ void DbapPannerAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuff
     for (int outputCh = getBusesLayout().getMainOutputChannels()-1; outputCh > 0; outputCh--)
     {
         buffer.copyFrom(outputCh, 0, buffer, 0, 0, buffer.getNumSamples());
-        
-        float currentGain = *parameters.getRawParameterValue(IDgain+(String)outputCh);
-        
-        if (currentGain == prevGain[outputCh])
+    }
+    
+    arma::mat channelGains (numChannels, 1);
+    dbap->getChannelGains (parameters.state.getChildWithName(IDSpeakerPositions), parameters.state.getChildWithName(IDSourcePosition), channelGains);
+    
+    static int counter = 0;
+    if (counter++ % (int)100 == 0)
+    {
+        std::cout << "channelGains: \n" << channelGains << std::endl;
+    }
+    
+    for (int ch = 0 ; ch < getBusesLayout().getMainOutputChannels(); ch++)
+    {
+        float currentGain = *parameters.getRawParameterValue(IDchannelGain+(String)ch);
+        if (currentGain == prevGain[ch])
         {
-            buffer.applyGain(currentGain);
+            buffer.applyGain(ch, 0, buffer.getNumSamples(), currentGain);
         }
         else
         {
-            buffer.applyGainRamp(0, buffer.getNumSamples(), prevGain[outputCh], currentGain);
-            prevGain[outputCh] = currentGain;
+            buffer.applyGainRamp(ch, 0, buffer.getNumSamples(), prevGain[ch], currentGain);
+            prevGain[ch] = currentGain;
         }
     }
-    buffer.applyGain(0, 0, buffer.getNumSamples(), *parameters.getRawParameterValue(IDgain+"0"));
     
     numInputChannels = getBusesLayout().getMainInputChannels();
     numOutputChannels = getBusesLayout().getMainOutputChannels();

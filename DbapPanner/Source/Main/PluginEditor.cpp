@@ -21,13 +21,12 @@ DbapPannerAudioProcessorEditor::DbapPannerAudioProcessorEditor (DbapPannerAudioP
         Slider* aSlider;
         gainSliders.add (aSlider = new Slider);
         addAndMakeVisible(aSlider);
-        aSlider->setSliderStyle(Slider::LinearBarVertical);
+        aSlider->setSliderStyle(Slider::LinearVertical);
+        aSlider->setTextBoxStyle(Slider::TextBoxBelow, false, 50, 20);
         
         SliderAttachment* aSliderAttachment;
-        gainAttachments.add ( aSliderAttachment = new SliderAttachment (valueTreeState, IDgain.toString()+(String)i, *aSlider));
+        gainAttachments.add ( aSliderAttachment = new SliderAttachment (valueTreeState, IDchannelGain.toString()+(String)i, *aSlider));
     }
-    
-    //test = new SliderAttachment (valueTreeState, IDgain.toString()+"0", *gainSliders[0]);
     
     addAndMakeVisible(display);
     display.setFont(Font(20.0));

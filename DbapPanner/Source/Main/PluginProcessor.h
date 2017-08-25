@@ -12,6 +12,7 @@
 
 #include "../../JuceLibraryCode/JuceHeader.h"
 #include "../Identifiers.h"
+#include "../Dbap.h"
 #include <armadillo>
 
 //==============================================================================
@@ -62,10 +63,12 @@ public:
     
 private:
 
-    const static int numChannels = 8;
+    const static int numChannels = 4;
     AudioProcessorValueTreeState parameters;
     UndoManager undoManager;
     float prevGain[numChannels];
+    
+    ScopedPointer<Dbap> dbap;
     
     Atomic<int> numInputChannels;
     Atomic<int> numOutputChannels;

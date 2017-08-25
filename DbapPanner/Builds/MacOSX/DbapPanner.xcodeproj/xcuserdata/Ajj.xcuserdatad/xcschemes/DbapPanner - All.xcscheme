@@ -63,7 +63,7 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "/Users/Ajj/Documents/Projects/DbapPanner/Reaper/testProject.RPP-bak"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "StereoIn12Out.trak"

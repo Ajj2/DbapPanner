@@ -23,11 +23,14 @@
         <FILE id="dOKRxj" name="PluginProcessor.h" compile="0" resource="0"
               file="Source/Main/PluginProcessor.h"/>
       </GROUP>
+      <FILE id="cRLUor" name="Dbap.cpp" compile="1" resource="0" file="Source/Dbap.cpp"/>
+      <FILE id="vDbpzB" name="Dbap.h" compile="0" resource="0" file="Source/Dbap.h"/>
       <FILE id="fxtrfB" name="Identifiers.h" compile="0" resource="0" file="Source/Identifiers.h"/>
+      <FILE id="z6L5oM" name="Utility.h" compile="0" resource="0" file="Source/Utility.h"/>
     </GROUP>
   </MAINGROUP>
   <EXPORTFORMATS>
-    <XCODE_MAC targetFolder="Builds/MacOSX" externalLibraries="armadillo">
+    <XCODE_MAC targetFolder="Builds/MacOSX" externalLibraries="armadillo" vst3Folder="">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="DbapPanner"
                        libraryPath="/usr/local/Cellar/armadillo/7.960.1/lib" headerPath="/usr/local/Cellar/armadillo/7.960.1/include"/>
