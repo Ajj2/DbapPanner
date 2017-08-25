@@ -213,6 +213,7 @@ void DbapPannerAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuff
     
     for (int ch = 0 ; ch < getBusesLayout().getMainOutputChannels(); ch++)
     {
+        parameters.getParameterAsValue(IDchannelGain+(String)ch).setValue(channelGains(ch, 0));
         float currentGain = *parameters.getRawParameterValue(IDchannelGain+(String)ch);
         if (currentGain == prevGain[ch])
         {
