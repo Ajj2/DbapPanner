@@ -34,6 +34,13 @@ DbapPannerAudioProcessor::DbapPannerAudioProcessor()
         parameters.createAndAddParameter(IDchannelGain.toString()+i, IDchannelGain.toString()+(String)i,String(), NormalisableRange<float> (0.0f, 1.0f), 0.5f, nullptr, nullptr);
     }
     
+    String nameX = IDSourcePosition.toString()+IDX;
+    parameters.createAndAddParameter(nameX, nameX, nameX, NormalisableRange<float>(-1.0, 1.0), 0.1, nullptr, nullptr);
+    String nameY = IDSourcePosition.toString()+IDY;
+    parameters.createAndAddParameter(nameY, nameY, nameY, NormalisableRange<float>(-1.0, 1.0), 0.2, nullptr, nullptr);
+    String nameZ = IDSourcePosition.toString()+IDZ;
+    parameters.createAndAddParameter(nameZ, nameZ, nameZ, NormalisableRange<float>(-1.0, 1.0), 0.3, nullptr, nullptr);
+    
     parameters.state = ValueTree (IDparameterState);
     
     ValueTree SpeakerPositions = ValueTree (IDSpeakerPositions);
@@ -41,21 +48,15 @@ DbapPannerAudioProcessor::DbapPannerAudioProcessor()
     {
         ValueTree SpeakerPosition = ValueTree (IDSpeakerPosition);
         SpeakerPosition.setProperty(IDIndex, ch, nullptr);
-        SpeakerPosition.setProperty(IDX, 1+ch, nullptr);
-        SpeakerPosition.setProperty(IDY, 2+ch, nullptr);
-        SpeakerPosition.setProperty(IDZ, 3+ch, nullptr);
+        SpeakerPosition.setProperty(IDX, (1.0f+(float)ch) / (float)numChannels, nullptr);
+        SpeakerPosition.setProperty(IDY, (1.0f+(float)ch) / (float)numChannels, nullptr);
+        SpeakerPosition.setProperty(IDZ, (1.0f+(float)ch) / (float)numChannels, nullptr);
         
         SpeakerPositions.addChild(SpeakerPosition, -1, &undoManager);
     }
+    
     parameters.state.addChild(SpeakerPositions, -1, &undoManager);
-    
-    ValueTree SourcePosition = ValueTree(IDSourcePosition);
-    SourcePosition.setProperty(IDX, 1.5, nullptr);
-    SourcePosition.setProperty(IDY, 2.5, nullptr);
-    SourcePosition.setProperty(IDZ, 3.5, nullptr);
-    
-    parameters.state.addChild(SourcePosition, -1, &undoManager);
-    
+        
     dbap = new Dbap();
 }
 
@@ -203,11 +204,20 @@ void DbapPannerAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuff
     }
     
     arma::mat channelGains (numChannels, 1);
-    dbap->getChannelGains (parameters.state.getChildWithName(IDSpeakerPositions), parameters.state.getChildWithName(IDSourcePosition), channelGains);
+    ValueTree sourcePosTree = ValueTree ("sourcePosTree");
+    
+    arma::mat SS (3, 1);
+    
+    SS (0, 0) = *parameters.getRawParameterValue(IDSourcePosition.toString()+IDX);
+    SS (1, 0) = *parameters.getRawParameterValue(IDSourcePosition.toString()+IDY);
+    SS (2, 0) = *parameters.getRawParameterValue(IDSourcePosition.toString()+IDZ);
+    
+    dbap->getChannelGains (parameters.state.getChildWithName(IDSpeakerPositions), SS, channelGains);
     
     static int counter = 0;
     if (counter++ % (int)100 == 0)
     {
+        //std::cout << "SS: \n" << SS << std::endl;
         std::cout << "channelGains: \n" << channelGains << std::endl;
     }
     

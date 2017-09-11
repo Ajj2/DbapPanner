@@ -39,10 +39,9 @@ private:
     AudioProcessorValueTreeState& valueTreeState;
     DbapPannerAudioProcessor& processor;
     
-    OwnedArray<SliderAttachment> gainAttachments;
-    OwnedArray<Slider> gainSliders;
-    
-    ScopedPointer<SliderAttachment> test;
+    OwnedArray<SliderAttachment> sourcePosAttachments;
+    OwnedArray<Slider> sourcePosSliders;
+    OwnedArray<Label> sourcePosLabels;
     
     TextEditor display;
 

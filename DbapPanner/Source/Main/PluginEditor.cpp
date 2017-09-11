@@ -18,14 +18,25 @@ DbapPannerAudioProcessorEditor::DbapPannerAudioProcessorEditor (DbapPannerAudioP
 {
     for (int i = 0; i < processor.getNumParameters(); i++)
     {
-        Slider* aSlider;
-        gainSliders.add (aSlider = new Slider);
-        addAndMakeVisible(aSlider);
-        aSlider->setSliderStyle(Slider::LinearVertical);
-        aSlider->setTextBoxStyle(Slider::TextBoxBelow, false, 50, 20);
+        String propertyName = processor.getParameterName(i);
         
-        SliderAttachment* aSliderAttachment;
-        gainAttachments.add ( aSliderAttachment = new SliderAttachment (valueTreeState, IDchannelGain.toString()+(String)i, *aSlider));
+        if (propertyName.contains(IDSourcePosition))
+        {
+            Slider* aSlider;
+            sourcePosSliders.add (aSlider = new Slider);
+            addAndMakeVisible(aSlider);
+            aSlider->setSliderStyle(Slider::LinearVertical);
+            aSlider->setTextBoxStyle(Slider::TextBoxBelow, false, 100, 20);
+            
+            Label* aLabel;
+            sourcePosLabels.add (aLabel = new Label (propertyName));
+            addAndMakeVisible(aLabel);
+            aLabel->setText(propertyName, dontSendNotification);
+            aLabel->setJustificationType(Justification::centred);
+            
+            SliderAttachment* aSliderAttachment;
+            sourcePosAttachments.add ( aSliderAttachment = new SliderAttachment (valueTreeState, propertyName, *aSlider));
+        }
     }
     
     addAndMakeVisible(display);
@@ -52,11 +63,13 @@ void DbapPannerAudioProcessorEditor::resized()
 {
     Rectangle<int> r = getLocalBounds();
     Rectangle<int> sliderArea = r.removeFromTop(r.getHeight()*0.75);
-    float sliderWidth =  sliderArea.getWidth() / (float)gainSliders.size();
+    Rectangle<int> labelArea = sliderArea.removeFromBottom(sliderArea.getHeight()*0.2);
+    float sliderWidth =  sliderArea.getWidth() / (float)sourcePosSliders.size();
     
-    for (int slider = 0; slider < gainSliders.size(); slider++)
+    for (int slider = 0; slider < sourcePosSliders.size(); slider++)
     {
-        gainSliders[slider]->setBounds(sliderArea.removeFromLeft(sliderWidth));
+        sourcePosSliders[slider]->setBounds(sliderArea.removeFromLeft(sliderWidth));
+        sourcePosLabels[slider]->setBounds(labelArea.removeFromLeft(sliderWidth));
     }
     display.setBounds(r);
 }

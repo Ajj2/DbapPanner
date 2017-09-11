@@ -22,7 +22,7 @@ Dbap::~Dbap()
     
 }
 
-bool Dbap::getChannelGains (const ValueTree& speakerPositions, const ValueTree& sourcePosition, arma::mat& result)
+bool Dbap::getChannelGains (const ValueTree& speakerPositions, const arma::mat& SS, arma::mat& result)
 {
     int numSpeakersInUse = speakerPositions.getNumChildren();
     
@@ -30,8 +30,6 @@ bool Dbap::getChannelGains (const ValueTree& speakerPositions, const ValueTree& 
     valueTreeToMatrix(speakerPositions, Sp);
     
     float k;
-    arma::mat SS (3, 1);
-    valueTreeToMatrix(sourcePosition, SS);
     
     arma::mat dis (Sp.n_cols, 1);
     arma::mat spW (Sp.n_cols, 1);
@@ -41,6 +39,13 @@ bool Dbap::getChannelGains (const ValueTree& speakerPositions, const ValueTree& 
     {
         dis(i, 0) = sqrt(arma::accu(arma::pow(Sp.col(i) - SS, 2) + pow(rLocal, 2)));
         spW(i, 0) = 1.f;
+    }
+    
+    static int counter = 0;
+    
+    if (counter++ % (int)100 == 0)
+    {
+        std::cout << "dis : \n" << dis << std::endl;
     }
     
     double twoA = 2.f * rolloff;
