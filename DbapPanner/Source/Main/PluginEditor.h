@@ -39,9 +39,15 @@ private:
     AudioProcessorValueTreeState& valueTreeState;
     DbapPannerAudioProcessor& processor;
     
+    ScopedPointer<TabbedComponent> tabbedComponent;
+    
     OwnedArray<SliderAttachment> sourcePosAttachments;
     OwnedArray<Slider> sourcePosSliders;
     OwnedArray<Label> sourcePosLabels;
+    
+    ScopedPointer<Slider> rolloffSlider;
+    ScopedPointer<SliderAttachment> rolloffSliderAttachment;
+    ScopedPointer<Label> rolloffLabel;
     
     TextEditor display;
 

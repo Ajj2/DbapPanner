@@ -10,10 +10,16 @@
               pluginChannelConfigs="" pluginIsSynth="0" pluginWantsMidiIn="1"
               pluginProducesMidiOut="0" pluginIsMidiEffectPlugin="0" pluginEditorRequiresKeys="0"
               pluginAUExportPrefix="DbapPannerAU" pluginRTASCategory="" aaxIdentifier="com.yourcompany.DbapPanner"
-              pluginAAXCategory="AAX_ePlugInCategory_Dynamics" jucerVersion="5.1.1"
+              pluginAAXCategory="AAX_ePlugInCategory_Dynamics" jucerVersion="5.1.2"
               companyName="Ajj">
   <MAINGROUP id="Jm79lo" name="DbapPanner">
     <GROUP id="{C172DB11-9680-D8EA-3F45-4B71D17B0059}" name="Source">
+      <GROUP id="{EFA4F22C-8FB5-CFAB-1734-A0AA0BEE4E54}" name="GUI">
+        <FILE id="QVclXB" name="DbapGui.cpp" compile="1" resource="0" file="Source/GUI/DbapGui.cpp"/>
+        <FILE id="S9am2I" name="DbapGui.h" compile="0" resource="0" file="Source/GUI/DbapGui.h"/>
+        <FILE id="V5hAxL" name="Grid.cpp" compile="1" resource="0" file="Source/GUI/Grid.cpp"/>
+        <FILE id="YOCmBd" name="Grid.h" compile="0" resource="0" file="Source/GUI/Grid.h"/>
+      </GROUP>
       <GROUP id="{B791FB82-9FDA-4B25-C051-FD1714ECA643}" name="Main">
         <FILE id="bH4F1x" name="PluginEditor.cpp" compile="1" resource="0"
               file="Source/Main/PluginEditor.cpp"/>
@@ -26,7 +32,6 @@
       <FILE id="cRLUor" name="Dbap.cpp" compile="1" resource="0" file="Source/Dbap.cpp"/>
       <FILE id="vDbpzB" name="Dbap.h" compile="0" resource="0" file="Source/Dbap.h"/>
       <FILE id="fxtrfB" name="Identifiers.h" compile="0" resource="0" file="Source/Identifiers.h"/>
-      <FILE id="z6L5oM" name="Utility.h" compile="0" resource="0" file="Source/Utility.h"/>
     </GROUP>
   </MAINGROUP>
   <EXPORTFORMATS>

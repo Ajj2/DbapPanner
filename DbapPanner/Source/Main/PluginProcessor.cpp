@@ -41,22 +41,41 @@ DbapPannerAudioProcessor::DbapPannerAudioProcessor()
     String nameZ = IDSourcePosition.toString()+IDZ;
     parameters.createAndAddParameter(nameZ, nameZ, nameZ, NormalisableRange<float>(-1.0, 1.0), 0.3, nullptr, nullptr);
     
-    parameters.state = ValueTree (IDparameterState);
-    
     ValueTree SpeakerPositions = ValueTree (IDSpeakerPositions);
+    
+    arma::mat speakerPosMat = { {-1, 0, 1},
+                                {1, 0, 1},};
+    
     for (int ch = 0; ch < numChannels; ch++)
     {
+        // Create a separate valueTree to store speaker positions in
         ValueTree SpeakerPosition = ValueTree (IDSpeakerPosition);
         SpeakerPosition.setProperty(IDIndex, ch, nullptr);
-        SpeakerPosition.setProperty(IDX, (1.0f+(float)ch) / (float)numChannels, nullptr);
-        SpeakerPosition.setProperty(IDY, (1.0f+(float)ch) / (float)numChannels, nullptr);
-        SpeakerPosition.setProperty(IDZ, (1.0f+(float)ch) / (float)numChannels, nullptr);
+        SpeakerPosition.setProperty(IDX, speakerPosMat(ch, 0), nullptr);
+        SpeakerPosition.setProperty(IDY, speakerPosMat(ch, 1), nullptr);
+        SpeakerPosition.setProperty(IDZ, speakerPosMat(ch, 2), nullptr);
+        
+        String nameX = IDSpeakerPosition.toString()+(String)ch+IDX;
+        String nameY = IDSpeakerPosition.toString()+(String)ch+IDY;
+        String nameZ = IDSpeakerPosition.toString()+(String)ch+IDZ;
+        
+        parameters.createAndAddParameter(nameX, nameX, nameX, NormalisableRange<float>(-1.0, 1.0), 0, nullptr, nullptr);
+        parameters.createAndAddParameter(nameY, nameY, nameY, NormalisableRange<float>(-1.0, 1.0), 0, nullptr, nullptr);
+        parameters.createAndAddParameter(nameZ, nameZ, nameZ, NormalisableRange<float>(-1.0, 1.0), 0, nullptr, nullptr);
+        
+        SpeakerPositions.getPropertyAsValue(IDX, &undoManager).referTo(parameters.getParameterAsValue(nameX));
+        SpeakerPositions.getPropertyAsValue(IDY, &undoManager).referTo(parameters.getParameterAsValue(nameY));
+        SpeakerPositions.getPropertyAsValue(IDZ, &undoManager).referTo(parameters.getParameterAsValue(nameZ));
         
         SpeakerPositions.addChild(SpeakerPosition, -1, &undoManager);
     }
+    String rolloffName = IDRolloff.toString();
+    parameters.createAndAddParameter(rolloffName, rolloffName, rolloffName, NormalisableRange<float> (0, 24), 6, nullptr, nullptr);
+    
+    parameters.state = ValueTree (IDparameterState);
     
     parameters.state.addChild(SpeakerPositions, -1, &undoManager);
-        
+            
     dbap = new Dbap();
 }
 
@@ -212,14 +231,8 @@ void DbapPannerAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuff
     SS (1, 0) = *parameters.getRawParameterValue(IDSourcePosition.toString()+IDY);
     SS (2, 0) = *parameters.getRawParameterValue(IDSourcePosition.toString()+IDZ);
     
-    dbap->getChannelGains (parameters.state.getChildWithName(IDSpeakerPositions), SS, channelGains);
-    
-    static int counter = 0;
-    if (counter++ % (int)100 == 0)
-    {
-        //std::cout << "SS: \n" << SS << std::endl;
-        std::cout << "channelGains: \n" << channelGains << std::endl;
-    }
+    float rolloff = *parameters.getRawParameterValue(IDRolloff);
+    dbap->getChannelGains (parameters.state.getChildWithName(IDSpeakerPositions), SS, rolloff, channelGains);
     
     for (int ch = 0 ; ch < getBusesLayout().getMainOutputChannels(); ch++)
     {

@@ -63,7 +63,7 @@ public:
     
 private:
 
-    const static int numChannels = 4;
+    const static int numChannels = 2;
     AudioProcessorValueTreeState parameters;
     UndoManager undoManager;
     float prevGain[numChannels];

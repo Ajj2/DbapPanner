@@ -43,9 +43,10 @@ public:
         return true;
     }
     
-    bool getChannelGains (const ValueTree& speakerPositions, const arma::mat& sourcePosition, arma::mat& result);
+    bool getChannelGains (const ValueTree& speakerPositions, const arma::mat& sourcePosition, float newRollOff, arma::mat& result);
     
 private:
-    float rolloff;
     float spatialBlur;
+    float rollOff;
+    float rollOffRef;
 };
